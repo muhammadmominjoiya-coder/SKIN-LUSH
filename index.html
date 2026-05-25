@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Identity Services Identity Core SDK (Local File support ke liye) -->
+    <!-- Google Identity Services Identity Core SDK -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
@@ -536,7 +536,7 @@
             <img src="logo.jpg" alt="Skin Lush Logo">
         </div>
         <div class="auth-btns" id="headerAuthBlock">
-            <button class="btn-login" onclick="openLoginModal()"><i class="fa-brand fa-google"></i> Login / Sign Up</button>
+            <button class="btn-login" onclick="openLoginModal()"><i class="fa-brands fa-google"></i> Login / Sign Up</button>
         </div>
     </header>
 
@@ -625,7 +625,7 @@
                     <span id="totalBillDisplay">Rs. 0</span>
                 </div>
 
-                <button type="submit" form="orderForm" class="btn-place-order"><i class="fa-solid fa-cart-check"></i> Place Confirm Order</button>
+                <button type="submit" form="orderForm" class="btn-place-order"><i class="fa-solid fa-cart-shopping"></i> Place Confirm Order</button>
             </div>
         </div>
     </div>
@@ -636,15 +636,14 @@
             <h3 style="color: var(--primary); margin-bottom: 10px;">Welcome to Skin Lush</h3>
             <p style="color:#666; font-size:0.9rem;">Sign up or login to track orders securely.</p>
             
-            <!-- Standard Google Native Object Mounting Platform Wrapper -->
             <div class="google-btn-wrapper">
-               <div id="g_id_onload"
-     data-client_id="535334658326-tq95i2td941eb2iah5d0b3a1ppljm2k9.apps.googleusercontent.com"
-     data-context="signin"
-     data-ux_mode="popup"
-     data-callback="handleGoogleIdentityResponse"
-     data-auto_prompt="false">
-</div>
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleIdentityResponse"
+                     data-auto_prompt="false">
+                </div>
                 <div class="g_id_signin"
                      data-type="standard"
                      data-shape="pill"
@@ -654,7 +653,6 @@
                      data-logo_alignment="left">
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -685,26 +683,25 @@
         </div>
     </footer>
 
-    <!-- --- Firebase Database Router Only --- -->
+    <!-- --- Firebase Database Router --- -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Firebase Configuration (Only Database Pipeline Engine)
+        // Real Configured Firebase Credentials
         const firebaseConfig = {
             apiKey: "AIzaSyAAmlRofO5Nh967cqnjCww2JEEyt9IZMFk",
-  authDomain: "skin-lush.firebaseapp.com",
-  projectId: "skin-lush",
-  storageBucket: "skin-lush.firebasestorage.app",
-  messagingSenderId: "535334658326",
-  appId: "1:535334658326:web:1de9adc9846db9704bb037",
-  measurementId: "G-LH88PZZR5N"
+            authDomain: "skin-lush.firebaseapp.com",
+            projectId: "skin-lush",
+            storageBucket: "skin-lush.firebasestorage.app",
+            messagingSenderId: "535334658326",
+            appId: "1:535334658326:web:1de9adc9846db9704bb037",
+            measurementId: "G-LH88PZZR5N"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // JWT Token Parser Algorithm to extract User profile object inside file://
         function parseJwt(token) {
             var base64Url = token.split('.')[1];
             var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -714,7 +711,6 @@
             return JSON.parse(jsonPayload);
         }
 
-        // Global Identity Callbacks assigned to window scope
         window.handleGoogleIdentityResponse = function(response) {
             try {
                 const userData = parseJwt(response.credential);
@@ -747,12 +743,11 @@
         window.handleLogout = function() {
             window.currentUser = null;
             document.getElementById('headerAuthBlock').innerHTML = `
-                <button class="btn-login" onclick="openLoginModal()"><i class="fa-brand fa-google"></i> Login / Sign Up</button>
+                <button class="btn-login" onclick="openLoginModal()"><i class="fa-brands fa-google"></i> Login / Sign Up</button>
             `;
             showNotification("Session cleared safely.", "success");
         }
 
-        // Firestore Order Execution Matrix
         window.processOrder = async function(e) {
             e.preventDefault();
             
@@ -799,38 +794,31 @@
         }
     </script>
 
-    <!-- --- Legacy UI Layer --- -->
+    <!-- --- UI Functional Layer --- -->
     <script>
         const database = {
-    products: [
-        { 
-            id: "p1", 
-            name: "SKIN LUSH ALOE VERA FACE WASH", 
-            price: 599, 
-            img: "facewash.jpg", // Naya naam yahan likhein
-            desc: "Made with natural aloe vera extract that gently cleanses, hydrates and refreshes your skin." 
-        },
-        { 
-            id: "p2", 
-            name: "SKIN LUSH PACK OF 2 SKIN POLISH", 
-            subtitle: "[Skin Polish & Whitening Powder]", 
-            price: 950, 
-            img: "skinpolish.jpg", // Naya naam yahan likhein
-            desc: "An ultimate skin rejuvenation formula configured for instant radiant look." 
-        },
-        { 
-            id: "p3", 
-            name: "SKIN LUSH ZAFRANI BEAUTY NIGHT CREAM", 
-            price: 799, 
-            img: "cream.jpg", // Naya naam yahan likhein
-            desc: "Infused with ultra-pure saffron strands (Zafran). Acts dynamically during sleep cycles." 
-        }
-    ]
-};
+            products: [
+                { id: "p1", name: "SKIN LUSH ALOE VERA FACE WASH", price: 599, img: "product1.jpg", desc: "Made with natural aloe vera extract that gently cleanses, hydrates and refreshes your skin. Perfect for all native systemic skin types." },
+                { id: "p2", name: "SKIN LUSH PACK OF 2 SKIN POLISH", subtitle: "[Skin Polish & Whitening Powder]", price: 950, img: "product2.jpg", desc: "An ultimate skin rejuvenation formula configured for instant radiant look and intense hyper-pigmentation cleanup." },
+                { id: "p3", name: "SKIN LUSH ZAFRANI BEAUTY NIGHT CREAM", price: 799, img: "product3.jpg", desc: "Infused with ultra-pure saffron strands (Zafran). Acts dynamically during sleep cycles to deliver a high-definition glowing look." }
+            ]
+        };
 
         let currentActiveProductId = "";
         let currentSelectedQuantity = 1;
         window.currentUser = null;
+
+        function showNotification(message, type = "error") {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.className = "toast-notification";
+            if(type === "success") toast.classList.add('success');
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 4000);
+        }
+
+        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
+        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
 
         function navigateTo(screenId) {
             document.querySelectorAll('.view-screen').forEach(view => view.classList.remove('active'));
@@ -844,7 +832,7 @@
             const container = document.getElementById('product-container');
             container.innerHTML = database.products.map(p => `
                 <div class="product-card" onclick="loadProductDetails('${p.id}')">
-                    <img src="${p.jpg}" alt="${p.name}">
+                    <img src="${p.img}" alt="${p.name}">
                     <h3>${p.name}</h3>
                     <div class="product-price">Rs. ${p.price} Only</div>
                     <button class="view-btn">View Details</button>
@@ -859,8 +847,7 @@
 
             document.getElementById('detail-content').innerHTML = `
                 <div class="detail-img-box">
-                    <!-- Aapka sahi code aisa hona chahiye: -->
-<img src="${product.img}" alt="${product.name}">
+                    <img src="${product.img}" alt="${product.name}">
                 </div>
                 <div class="detail-info-box">
                     <div class="detail-title-price">
@@ -895,7 +882,7 @@
 
         function updateQty(delta) {
             const target = currentSelectedQuantity + delta;
-            if(target >= 1 && target <= 50) {
+            if(target >= 1 && target <= 20) {
                 currentSelectedQuantity = target;
                 document.getElementById('qtyBox').innerText = currentSelectedQuantity;
                 calculateBill();
@@ -904,32 +891,27 @@
 
         function calculateBill() {
             const product = database.products.find(p => p.id === currentActiveProductId);
-            const shippingCost = parseInt(document.getElementById('deliveryTier').value);
-            const baseComp = product.price * currentSelectedQuantity;
-            document.getElementById('basePriceDisplay').innerText = `Rs. ${baseComp}`;
-            document.getElementById('shippingPriceDisplay').innerText = `Rs. ${shippingCost}`;
-            document.getElementById('totalBillDisplay').innerText = `Rs. ${baseComp + shippingCost}`;
-        }
+            if(!product) return;
 
-        function showNotification(msg, status = "error") {
-            const toast = document.getElementById('toast');
-            toast.className = `toast-notification ${status} show`;
-            toast.innerHTML = status === "success" ? `<i class="fa-solid fa-circle-check"></i> ${msg}` : `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}`;
-            setTimeout(() => { toast.classList.remove('show'); }, 5000);
+            const basePrice = product.price * currentSelectedQuantity;
+            const shippingCost = parseInt(document.getElementById('deliveryTier').value);
+            const totalBill = basePrice + shippingCost;
+
+            document.getElementById('basePriceDisplay').innerText = `Rs. ${basePrice}`;
+            document.getElementById('shippingPriceDisplay').innerText = `Rs. ${shippingCost}`;
+            document.getElementById('totalBillDisplay').innerText = `Rs. ${totalBill}`;
         }
 
         function handleMessageSubmit(e) {
             e.preventDefault();
-            showNotification("Your message has been received.", "success");
-            document.getElementById('msgName').value = '';
-            document.getElementById('msgEmail').value = '';
-            document.getElementById('msgBody').value = '';
+            showNotification("Message transmitted successfully into our pipeline infrastructure.", "success");
+            e.target.reset();
         }
 
-        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
-        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
-
-        window.onload = () => { renderHomeProducts(); };
+        // Initialize App UI on load
+        window.onload = function() {
+            renderHomeProducts();
+        };
     </script>
 </body>
 </html>
