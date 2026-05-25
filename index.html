@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Lush | Premium Cosmetics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght=300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Identity Services Identity Core SDK (Local File support ke liye) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        /* --- Core Styling & Variables --- */
+        :root {
+            --primary: #2d5a27;      /* Luxury Soft Green */
+            --secondary: #8b5a2b;    /* Elegant Earthy Gold */
+            --light-bg: #fdfbf7;     /* Bright & Fresh Off-White */
+            --dark-text: #222222;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Custom Notification --- */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: -400px;
+            background: #ff4d4d;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        .toast-notification.success { background: #2ecc71; }
+        .toast-notification.show { right: 20px; }
+
+        /* --- Header / Navigation --- */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .logo-area img {
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .auth-btns .btn-login {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .auth-btns .btn-login:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* User Profile Info Styling */
+        .user-profile-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-circle {
+            width: 38px;
+            height: 38px;
+            background-color: #008b76;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 1px solid #ff4d4d;
+        }
+
+        .user-display-name {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #222222;
+        }
+
+        .btn-logout-link {
+            background: none;
+            border: none;
+            color: #222222;
+            text-decoration: underline;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        /* --- Global Screen View Handling --- */
+        .view-screen {
+            display: none;
+            padding: 40px 5%;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .view-screen.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Home Screen Styles --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #f5efe6 0%, #e8f0e6 100%);
+            border-radius: 24px;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            animation: scaleUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #555;
+            max-width: 600px;
+            margin: 0 auto 25px;
+        }
+
+        .ad-banner {
+            background: var(--secondary);
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.01); box-shadow: 0 0 20px rgba(139,90,43,0.4); }
+            100% { transform: scale(1); }
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid #f0e6df;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .product-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--dark-text);
+        }
+
+        .product-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .view-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* --- Product Detail View Styles --- */
+        .back-nav {
+            margin-bottom: 30px;
+        }
+
+        .back-link {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 50px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .detail-img-box img {
+            width: 100%;
+            max-height: 450px;
+            object-fit: contain;
+        }
+
+        .detail-info-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .detail-title-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f5f5f5;
+            padding-bottom: 15px;
+        }
+
+        .detail-title-price h2 { font-size: 2rem; color: var(--primary); max-width: 70%; }
+        .detail-title-price .price { font-size: 1.8rem; font-weight: 700; color: var(--secondary); }
+
+        .detail-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .order-action-area {
+            text-align: right;
+        }
+
+        .btn-order-now {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(139,90,43,0.3);
+            transition: var(--transition);
+        }
+
+        .btn-order-now:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139,90,43,0.5);
+        }
+
+        /* --- Checkout Screen Styles --- */
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .checkout-form-card, .checkout-summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .checkout-form-card h3, .checkout-summary-card h3 {
+            margin-bottom: 25px;
+            color: var(--primary);
+            border-bottom: 2px solid #f8f8f8;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(45,90,39,0.1);
+        }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .qty-btn {
+            background: #eee;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .qty-display { font-size: 1.2rem; font-weight: 600; min-width: 30px; text-align: center; }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        .summary-row.total {
+            border-top: 2px dashed #ddd;
+            padding-top: 15px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .btn-place-order {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: var(--transition);
+        }
+
+        .btn-place-order:hover { background: #1e3d1a; }
+
+        /* --- Footer & Contact Info Block --- */
+        footer {
+            background: #1a2e17;
+            color: white;
+            padding: 60px 5% 30px;
+            margin-top: 80px;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-box h4 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .footer-box p, .footer-box a {
+            color: #ccc;
+            text-decoration: none;
+            margin-bottom: 12px;
+            display: block;
+            font-size: 1rem;
+        }
+
+        .footer-box i { margin-right: 10px; color: var(--secondary); }
+
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .contact-form button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        /* --- Modal Popup for Login System --- */
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+        }
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.5rem; cursor: pointer;
+        }
+        
+        /* Direct Layout Google Rendering container */
+        .google-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast-notification"></div>
+
+    <header>
+        <div class="logo-area" onclick="navigateTo('home')">
+            <img src="logo.png" alt="Skin Lush Logo">
+        </div>
+        <div class="auth-btns" id="headerAuthBlock">
+            <button class="btn-login" onclick="openLoginModal()"><i class="fa-brand fa-google"></i> Login / Sign Up</button>
+        </div>
+    </header>
+
+    <main id="home-view" class="view-screen active">
+        <div class="ad-banner">
+            ✨ FLATSALE: Get Premium Glowing Skin Today! Free standard delivery on orders above Rs. 3000! ✨
+        </div>
+
+        <section class="hero">
+            <h1>Reveal Your Natural Glow</h1>
+            <p>Experience luxury organic skincare meticulously processed to heal, glow, and rejuvenate your skin profile.</p>
+        </section>
+
+        <section>
+            <h2 class="section-title">Our Exclusive Collection</h2>
+            <div class="products-grid" id="product-container"></div>
+        </section>
+    </main>
+
+    <div id="detail-view" class="view-screen">
+        <div class="back-nav">
+            <button class="back-link" onclick="navigateTo('home')"><i class="fa-solid fa-arrow-left"></i> Back to Products</button>
+        </div>
+        <div class="detail-wrapper" id="detail-content"></div>
+    </div>
+
+    <div id="checkout-view" class="view-screen">
+        <div class="back-nav">
+            <button class="back-link" onclick="handleCheckoutBack()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        </div>
+        
+        <div class="checkout-grid">
+            <div class="checkout-form-card">
+                <h3><i class="fa-solid fa-truck-ramp-box"></i> Shipping & Delivery Details</h3>
+                <form id="orderForm" onsubmit="processOrder(event)">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="custName" placeholder="Enter full native identity name">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number (11 Digits)</label>
+                        <input type="tel" id="custPhone" placeholder="e.g. 03247313931" maxlength="11">
+                    </div>
+                    <div class="form-group">
+                        <label>City Name</label>
+                        <input type="text" id="custCity" placeholder="e.g. Gujranwala, Bahawalpur">
+                    </div>
+                    <div class="form-group">
+                        <label>Exact Drop Location Address</label>
+                        <input type="text" id="custAddress" placeholder="Street Number, House Mapping Landmark Area">
+                    </div>
+                    <div class="form-group">
+                        <label>Select Delivery Tier Speed</label>
+                        <select id="deliveryTier" onchange="calculateBill()">
+                            <option value="150">Standard Delivery (Rs. 150)</option>
+                            <option value="250">Fast Delivery (Rs. 250)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div class="checkout-summary-card">
+                <h3>Order Configuration Summary</h3>
+                <div id="checkout-product-meta"></div>
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                
+                <div class="form-group">
+                    <label>Manage Product Units Quantity</label>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="updateQty(-1)">-</button>
+                        <span class="qty-display" id="qtyBox">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                </div>
+
+                <div class="summary-row">
+                    <span>Base Price Matrix:</span>
+                    <span id="basePriceDisplay">Rs. 0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Selected Delivery Tier Cost:</span>
+                    <span id="shippingPriceDisplay">Rs. 150</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Net Aggregated Billing:</span>
+                    <span id="totalBillDisplay">Rs. 0</span>
+                </div>
+
+                <button type="submit" form="orderForm" class="btn-place-order"><i class="fa-solid fa-cart-check"></i> Place Confirm Order</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeLoginModal()">&times;</span>
+            <h3 style="color: var(--primary); margin-bottom: 10px;">Welcome to Skin Lush</h3>
+            <p style="color:#666; font-size:0.9rem;">Sign up or login to track orders securely.</p>
+            
+            <!-- Standard Google Native Object Mounting Platform Wrapper -->
+            <div class="google-btn-wrapper">
+               <div id="g_id_onload"
+     data-client_id="535334658326-tq95i2td941eb2iah5d0b3a1ppljm2k9.apps.googleusercontent.com"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-callback="handleGoogleIdentityResponse"
+     data-auto_prompt="false">
+</div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="pill"
+                     data-theme="outline"
+                     data-text="continue_with"
+                     data-size="large"
+                     data-logo_alignment="left">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-box">
+                <h4>SKIN LUSH Store</h4>
+                <p>Delivering high-definition cosmetic solutions engineered with natural organic compounds for ultimate facial radiance profiles.</p>
+            </div>
+            <div class="footer-box">
+                <h4>Contact Infrastructure</h4>
+                <a href="tel:+923247313931"><i class="fa-solid fa-phone"></i> +92 324 7313931</a>
+                <a href="mailto:waseemmehar5621070@gmail.com"><i class="fa-solid fa-envelope"></i> waseemmehar5621070@gmail.com</a>
+                <p><i class="fa-solid fa-location-dot"></i> Sadiq Akbar road shahinabad Gujranwala</p>
+            </div>
+            <div class="footer-box">
+                <h4>Transmission Pipeline</h4>
+                <form class="contact-form" onsubmit="handleMessageSubmit(event)">
+                    <input type="text" id="msgName" placeholder="Your Full Name" required>
+                    <input type="email" id="msgEmail" placeholder="Your Registered Email Address" required>
+                    <textarea id="msgBody" rows="3" placeholder="Write your context query message here..." required></textarea>
+                    <button type="submit">Send Message Securely</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 SKIN LUSH Cosmetics Inc. All Rights Reserved Architecture Ecosystem.
+        </div>
+    </footer>
+
+    <!-- --- Firebase Database Router Only --- -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Firebase Configuration (Only Database Pipeline Engine)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAAmlRofO5Nh967cqnjCww2JEEyt9IZMFk",
+  authDomain: "skin-lush.firebaseapp.com",
+  projectId: "skin-lush",
+  storageBucket: "skin-lush.firebasestorage.app",
+  messagingSenderId: "535334658326",
+  appId: "1:535334658326:web:1de9adc9846db9704bb037",
+  measurementId: "G-LH88PZZR5N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // JWT Token Parser Algorithm to extract User profile object inside file://
+        function parseJwt(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        // Global Identity Callbacks assigned to window scope
+        window.handleGoogleIdentityResponse = function(response) {
+            try {
+                const userData = parseJwt(response.credential);
+                window.currentUser = {
+                    uid: userData.sub,
+                    name: userData.name,
+                    email: userData.email,
+                    picture: userData.picture
+                };
+
+                const firstLetter = userData.name ? userData.name.charAt(0).toUpperCase() : 'U';
+                const shortName = userData.name ? userData.name.split(' ')[0] : 'User';
+                
+                document.getElementById('headerAuthBlock').innerHTML = `
+                    <div class="user-profile-info">
+                        <div class="user-avatar-circle">${firstLetter}</div>
+                        <span class="user-display-name">${shortName}</span>
+                        <button class="btn-logout-link" onclick="handleLogout()">Logout</button>
+                    </div>
+                `;
+                
+                showNotification("Logged in securely via Google Identity pipeline system.", "success");
+                closeLoginModal();
+            } catch (err) {
+                console.error(err);
+                showNotification("Identity conversion error token parsing failed.", "error");
+            }
+        }
+
+        window.handleLogout = function() {
+            window.currentUser = null;
+            document.getElementById('headerAuthBlock').innerHTML = `
+                <button class="btn-login" onclick="openLoginModal()"><i class="fa-brand fa-google"></i> Login / Sign Up</button>
+            `;
+            showNotification("Session cleared safely.", "success");
+        }
+
+        // Firestore Order Execution Matrix
+        window.processOrder = async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const city = document.getElementById('custCity').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+
+            if(!name || !phone || !city || !address) {
+                showNotification("Please fill all fields completely before submitting.", "error");
+                return;
+            }
+
+            if(phone.length !== 11 || isNaN(phone)) {
+                showNotification("Phone length must be 11 numeric digits.", "error");
+                return;
+            }
+
+            const product = database.products.find(p => p.id === currentActiveProductId);
+            const shippingCost = parseInt(document.getElementById('deliveryTier').value);
+            const baseComp = product.price * currentSelectedQuantity;
+            const netComp = baseComp + shippingCost;
+
+            const orderPayload = {
+                customerDetails: { fullName: name, phoneIndex: phone, cityName: city, dropLocation: address },
+                productDetails: { productId: product.id, productName: product.name, unitPrice: product.price, orderedQuantity: currentSelectedQuantity },
+                billingMatrix: { basePrice: baseComp, shippingCost: shippingCost, netAggregatedBilling: netComp },
+                metaSystem: {
+                    userId: window.currentUser ? window.currentUser.uid : "anonymous_guest",
+                    userEmail: window.currentUser ? window.currentUser.email : "guest_checkout",
+                    timestampPipeline: serverTimestamp()
+                }
+            };
+
+            try {
+                await addDoc(collection(db, "orders"), orderPayload);
+                showNotification("Success! Your premium order has been recorded into the processing queue.", "success");
+                document.getElementById('orderForm').reset();
+                setTimeout(() => { navigateTo('home'); }, 2000);
+            } catch (error) {
+                console.error(error);
+                showNotification("Could not communicate with secure data node.", "error");
+            }
+        }
+    </script>
+
+    <!-- --- Legacy UI Layer --- -->
+    <script>
+        const database = {
+            products: [
+                { id: "p1", name: "SKIN LUSH ALOE VERA FACE WASH", price: 599, img: "product1.png", desc: "Made with natural aloe vera extract that gently cleanses, hydrates and refreshes your skin. Perfect for all native systemic skin types." },
+                { id: "p2", name: "SKIN LUSH PACK OF 2 SKIN POLISH", subtitle: "[Skin Polish & Whitening Powder]", price: 950, img: "product2.png", desc: "An ultimate skin rejuvenation formula configured for instant radiant look and intense hyper-pigmentation cleanup." },
+                { id: "p3", name: "SKIN LUSH ZAFRANI BEAUTY NIGHT CREAM", price: 799, img: "product3.png", desc: "Infused with ultra-pure saffron strands (Zafran). Acts dynamically during sleep cycles to deliver a high-definition glowing look." }
+            ]
+        };
+
+        let currentActiveProductId = "";
+        let currentSelectedQuantity = 1;
+        window.currentUser = null;
+
+        function navigateTo(screenId) {
+            document.querySelectorAll('.view-screen').forEach(view => view.classList.remove('active'));
+            document.getElementById(`${screenId}-view`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function handleCheckoutBack() { navigateTo('detail'); }
+
+        function renderHomeProducts() {
+            const container = document.getElementById('product-container');
+            container.innerHTML = database.products.map(p => `
+                <div class="product-card" onclick="loadProductDetails('${p.id}')">
+                    <img src="${p.img}" alt="${p.name}">
+                    <h3>${p.name}</h3>
+                    <div class="product-price">Rs. ${p.price} Only</div>
+                    <button class="view-btn">View Details</button>
+                </div>
+            `).join('');
+        }
+
+        function loadProductDetails(id) {
+            const product = database.products.find(p => p.id === id);
+            if(!product) return;
+            currentActiveProductId = id;
+
+            document.getElementById('detail-content').innerHTML = `
+                <div class="detail-img-box">
+                    <img src="${product.img}" alt="${product.name}">
+                </div>
+                <div class="detail-info-box">
+                    <div class="detail-title-price">
+                        <h2>${product.name} ${product.subtitle ? `<span style="font-size:1.1rem; color:#666; display:block;">${product.subtitle}</span>` : ''}</h2>
+                        <div class="price">Rs. ${product.price}</div>
+                    </div>
+                    <p class="detail-desc">${product.desc}</p>
+                    <div class="order-action-area">
+                        <button class="btn-order-now" onclick="launchCheckoutScreen()"><i class="fa-solid fa-cart-shopping"></i> Order Now</button>
+                    </div>
+                </div>
+            `;
+            navigateTo('detail');
+        }
+
+        function launchCheckoutScreen() {
+            currentSelectedQuantity = 1;
+            document.getElementById('qtyBox').innerText = currentSelectedQuantity;
+            const product = database.products.find(p => p.id === currentActiveProductId);
+            document.getElementById('checkout-product-meta').innerHTML = `
+                <div style="display:flex; gap:15px; align-items:center; margin-top:15px;">
+                    <img src="${product.img}" style="width:70px; height:70px; object-fit:contain; border-radius:8px;">
+                    <div>
+                        <h4 style="color:var(--dark-text); font-size:1rem;">${product.name}</h4>
+                        <span style="color:var(--secondary); font-weight:700;">Rs. ${product.price}</span>
+                    </div>
+                </div>
+            `;
+            calculateBill();
+            navigateTo('checkout');
+        }
+
+        function updateQty(delta) {
+            const target = currentSelectedQuantity + delta;
+            if(target >= 1 && target <= 50) {
+                currentSelectedQuantity = target;
+                document.getElementById('qtyBox').innerText = currentSelectedQuantity;
+                calculateBill();
+            }
+        }
+
+        function calculateBill() {
+            const product = database.products.find(p => p.id === currentActiveProductId);
+            const shippingCost = parseInt(document.getElementById('deliveryTier').value);
+            const baseComp = product.price * currentSelectedQuantity;
+            document.getElementById('basePriceDisplay').innerText = `Rs. ${baseComp}`;
+            document.getElementById('shippingPriceDisplay').innerText = `Rs. ${shippingCost}`;
+            document.getElementById('totalBillDisplay').innerText = `Rs. ${baseComp + shippingCost}`;
+        }
+
+        function showNotification(msg, status = "error") {
+            const toast = document.getElementById('toast');
+            toast.className = `toast-notification ${status} show`;
+            toast.innerHTML = status === "success" ? `<i class="fa-solid fa-circle-check"></i> ${msg}` : `<i class="fa-solid fa-triangle-exclamation"></i> ${msg}`;
+            setTimeout(() => { toast.classList.remove('show'); }, 5000);
+        }
+
+        function handleMessageSubmit(e) {
+            e.preventDefault();
+            showNotification("Your message has been received.", "success");
+            document.getElementById('msgName').value = '';
+            document.getElementById('msgEmail').value = '';
+            document.getElementById('msgBody').value = '';
+        }
+
+        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
+        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+
+        window.onload = () => { renderHomeProducts(); };
+    </script>
+</body>
+</html>
