@@ -844,7 +844,7 @@
             const container = document.getElementById('product-container');
             container.innerHTML = database.products.map(p => `
                 <div class="product-card" onclick="loadProductDetails('${p.id}')">
-                    <img src="${p.img}" alt="${p.name}">
+                    <img src="${p.jpg}" alt="${p.name}">
                     <h3>${p.name}</h3>
                     <div class="product-price">Rs. ${p.price} Only</div>
                     <button class="view-btn">View Details</button>
@@ -859,7 +859,8 @@
 
             document.getElementById('detail-content').innerHTML = `
                 <div class="detail-img-box">
-                    <img src="${product.img}" alt="${product.name}">
+                    <!-- Aapka sahi code aisa hona chahiye: -->
+<img src="${product.img}" alt="${product.name}">
                 </div>
                 <div class="detail-info-box">
                     <div class="detail-title-price">
